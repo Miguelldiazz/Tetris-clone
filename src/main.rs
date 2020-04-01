@@ -34,7 +34,7 @@ impl System {
 
         let colors = [red, blue, green, yellow, purple];
 
-        let black: [f32; 4] = hex("999966");
+        let black: [f32; 4] = hex("000000");
         
         
         self.game.draw_piece();
@@ -44,7 +44,7 @@ impl System {
 
         self.gl.draw(args.viewport(), |c, gl| {
             // Clear the screen.
-            clear(WHITE, gl);
+            clear(black, gl);
 
             let transform = c
                 .transform
