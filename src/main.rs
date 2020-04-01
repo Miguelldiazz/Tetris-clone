@@ -58,9 +58,9 @@ impl System {
                     if b[y][x] >= 0 {
                         rectangle(colors[b[y][x] as usize], [rx, ry, s, s], transform, gl);
                     }
-                    line(black, 0.5, [0.0, ry, size.0, ry], transform, gl);
+                    line(black, 1.0, [0.0, ry, size.0, ry], transform, gl);
                 }
-                line(black, 0.5, [rx, 0.0, rx, size.1], transform, gl);
+                line(black, 1.0, [rx, 0.0, rx, size.1], transform, gl);
             }
         });
     }

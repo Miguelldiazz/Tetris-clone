@@ -159,7 +159,10 @@ impl Game {
     pub fn rotate(&mut self) {
         self.clean_piece();
         self.piece.rotate();
-        self.print();
+        if !self.legal_position() {
+            self.piece.rotate_back();
+            self.draw_piece();
+        }
     }
 
     pub fn print(&self) {

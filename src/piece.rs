@@ -314,6 +314,14 @@ impl Piece {
         }
     }
 
+    pub fn rotate_back(&mut self) {        
+        if self.rotation == 0 {
+            self.rotation = 3;
+        } else{
+            self.rotation -= 1;
+        }
+    }
+
     pub fn move_left(&mut self) {
         self.position.0 -= 1;
     }
