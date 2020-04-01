@@ -15,7 +15,7 @@ use piston::event_loop::*;
 use piston::input::*;
 use piston::window::WindowSettings;
 use piston::{ButtonEvent, RenderEvent};
-use graphics::color::*;
+use piston_window::color::*;
 
 struct System {
     gl: GlGraphics,
@@ -26,7 +26,16 @@ impl System {
     fn render(&mut self, args: &RenderArgs) {
         use graphics::*;
 
-        const RED: [f32; 4] = [1.0, 0.0, 0.0, 1.0];
+        let red: [f32; 4] = hex("ff0000");
+        let blue: [f32; 4] = hex("0040ff");
+        let green: [f32; 4] = hex("00ff00");
+        let yellow: [f32; 4] = hex("ffff00");
+        let purple: [f32; 4] = hex("ff00ff");
+
+        let colors = [red, blue, green, yellow, purple];
+
+        let black: [f32; 4] = hex("999966");
+        
         
         self.game.draw_piece();
         let b = self.game.get_board();
@@ -42,15 +51,16 @@ impl System {
                 .trans(0.0, 0.0);   
             
             for x in 0..game::BOARD_SIZE_X{
-                let rx = x as f64 * size.0/BOARD_SIZE_X as f64;                 
+                let s = size.0/BOARD_SIZE_X as f64;
+                let rx = x as f64 * s;                 
                 for y in 0..game::BOARD_SIZE_Y {
-                    let ry = y as f64 * size.0/BOARD_SIZE_X as f64;
-                    if b[y][x] == 1 {
-                        rectangle(RED, [rx, ry, 30.0, 30.0], transform, gl);
+                    let ry = y as f64 * s;
+                    if b[y][x] >= 0 {
+                        rectangle(colors[b[y][x] as usize], [rx, ry, s, s], transform, gl);
                     }
-                    line(BLACK, 0.5, [0.0, ry, size.0, ry], transform, gl);
+                    line(black, 0.5, [0.0, ry, size.0, ry], transform, gl);
                 }
-                line(BLACK, 0.5, [rx, 0.0, rx, size.1], transform, gl);
+                line(black, 0.5, [rx, 0.0, rx, size.1], transform, gl);
             }
         });
     }
@@ -95,6 +105,7 @@ fn main() {
                     Button::Keyboard(Key::Right) => system.game.move_right(),
                     Button::Keyboard(Key::Space) => system.game.rotate(),
                     Button::Keyboard(Key::Down) => system.game.move_down(),
+                    Button::Keyboard(Key::C) => system.game.change_piece(),
                     _ => (),
                 }                
             }

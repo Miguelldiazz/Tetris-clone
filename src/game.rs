@@ -4,16 +4,16 @@ pub const BOARD_SIZE_X: usize = 10;
 pub const BOARD_SIZE_Y: usize = 20;
 
 pub struct Game {
-    board: [[u8; BOARD_SIZE_X]; BOARD_SIZE_Y],
+    board: [[i8; BOARD_SIZE_X]; BOARD_SIZE_Y],
     piece: Piece,
     next_piece: Piece,
 }
 
-fn full(a: [u8; BOARD_SIZE_X])-> bool {
+fn full(a: [i8; BOARD_SIZE_X])-> bool {
     let mut ret = true;
     
     for i in 0..BOARD_SIZE_X {
-        if a[i] == 0 {
+        if a[i] < 0 {
             ret = false;
         }
     }
@@ -23,7 +23,7 @@ fn full(a: [u8; BOARD_SIZE_X])-> bool {
 impl Game {
     pub fn new() -> Game {
         Game {
-            board: [[0; BOARD_SIZE_X]; BOARD_SIZE_Y],
+            board: [[-1; BOARD_SIZE_X]; BOARD_SIZE_Y],
             piece: Piece::new(),
             next_piece: Piece::new(),
         }
@@ -37,9 +37,9 @@ impl Game {
                 let dx = x as i8 + px;
                 let dy = y as i8 + py;
                 let block = self.piece.get_block_at(x, y);
-                if block == 1{
+                if block >= 0{
                     if (dx >= 0) & (dy >= 0) & (dy < BOARD_SIZE_Y as i8) {
-                        self.board[dy as usize][dx as usize] = 1;
+                        self.board[dy as usize][dx as usize] = self.piece.get_color() as i8;
                     }
                 }                
             }
@@ -54,9 +54,9 @@ impl Game {
                 let dx = x as i8 + px;
                 let dy = y as i8 + py;
                 let block = self.piece.get_block_at(x, y);
-                if block == 1{
+                if block >= 0{
                     if (dx >= 0) & (dy >= 0) & (dy < BOARD_SIZE_Y as i8) {
-                        self.board[dy as usize][dx as usize] = 0;
+                        self.board[dy as usize][dx as usize] = -1;
                     }
                 }                
             }
@@ -67,7 +67,7 @@ impl Game {
         let mut ret = false;
 
         for i in 0..BOARD_SIZE_X {
-            if self.board[0][i] == 1 {
+            if self.board[0][i] >= 0 {
                 ret = true
             }
         }
@@ -83,9 +83,11 @@ impl Game {
     }
 
     pub fn change_piece(&mut self) {
+        self.clean_piece();
         let aux = self.piece;
         self.piece = self.next_piece;
         self.next_piece = aux;
+        self.draw_piece();
     }
 
     pub fn legal_position(&self)-> bool {
@@ -101,7 +103,7 @@ impl Game {
                     if (dy >= BOARD_SIZE_Y as i8) | (dx >= BOARD_SIZE_X as i8) | (dx < 0) {
                         ret = false;
                     } else if (dx >= 0) & (dy >= 0) {
-                        if self.board[dy as usize][dx as usize] == 1 {
+                        if self.board[dy as usize][dx as usize] >= 0 {
                             ret = false;
                         }
                     }
@@ -170,7 +172,7 @@ impl Game {
     }
 
     pub fn pull_down(&mut self, p: usize) {  
-        self.board[p] = [0; BOARD_SIZE_X];      
+        self.board[p] = [-1; BOARD_SIZE_X];      
         for i in (0..p + 1).rev() {
             if i != 0 {
                 self.board[i] = self.board[i - 1];
@@ -188,7 +190,7 @@ impl Game {
 
     
 
-    pub fn get_board(&self)-> [[u8; BOARD_SIZE_X]; BOARD_SIZE_Y] {
+    pub fn get_board(&self)-> [[i8; BOARD_SIZE_X]; BOARD_SIZE_Y] {
         self.board
     }
 }
