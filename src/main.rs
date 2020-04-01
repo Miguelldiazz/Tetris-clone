@@ -15,6 +15,7 @@ use piston::event_loop::*;
 use piston::input::*;
 use piston::window::WindowSettings;
 use piston::{ButtonEvent, RenderEvent};
+use graphics::color::*;
 
 struct System {
     gl: GlGraphics,
@@ -25,26 +26,31 @@ impl System {
     fn render(&mut self, args: &RenderArgs) {
         use graphics::*;
 
-        const GREEN: [f32; 4] = [0.0, 1.0, 0.0, 1.0];
         const RED: [f32; 4] = [1.0, 0.0, 0.0, 1.0];
         
         self.game.draw_piece();
         let b = self.game.get_board();
 
+        let size = (args.window_size[0], args.window_size[1]);
+
         self.gl.draw(args.viewport(), |c, gl| {
             // Clear the screen.
-            clear(GREEN, gl);
+            clear(WHITE, gl);
 
             let transform = c
                 .transform
-                .trans(0.0, 0.0);           
+                .trans(0.0, 0.0);   
             
             for x in 0..game::BOARD_SIZE_X{
+                let rx = x as f64 * size.0/BOARD_SIZE_X as f64;                 
                 for y in 0..game::BOARD_SIZE_Y {
+                    let ry = y as f64 * size.0/BOARD_SIZE_X as f64;
                     if b[y][x] == 1 {
-                        rectangle(RED, [x as f64 * 30.0, y as f64 * 30.0, 30.0, 30.0], transform, gl);
+                        rectangle(RED, [rx, ry, 30.0, 30.0], transform, gl);
                     }
+                    line(BLACK, 0.5, [0.0, ry, size.0, ry], transform, gl);
                 }
+                line(BLACK, 0.5, [rx, 0.0, rx, size.1], transform, gl);
             }
         });
     }
